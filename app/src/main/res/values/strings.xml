@@ -11,5 +11,6 @@
     <string name="correct_toast">Correct!</string>
     <string name="incorrect_toast">Incorrect!</string>
     <string name="next_button">Next</string>
+    <string name="welcome_message">Welcome to GeoQuiz!</string>
 
 </resources>
