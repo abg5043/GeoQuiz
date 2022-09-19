@@ -44,6 +44,16 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
         }
 
+        binding.previousButton.setOnClickListener {
+            currentIndex = if(currentIndex == 0) questionBank.size - 1 else currentIndex - 1
+            updateQuestion()
+        }
+
+        binding.questionTextView.setOnClickListener {
+            currentIndex = (currentIndex + 1) % questionBank.size
+            updateQuestion()
+        }
+
         updateQuestion()
     }
 
@@ -53,9 +63,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAnswer(userAnswer : Boolean) {
-        val correctAnsswer = questionBank[currentIndex].answer
+        val correctAnswer = questionBank[currentIndex].answer
 
-        val messageResId = if (userAnswer == correctAnsswer) {
+        val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_toast
         } else {
             R.string.incorrect_toast
