@@ -1,14 +1,11 @@
 package com.example.geoquiz
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.geoquiz.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -141,8 +138,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun disableButton(button: Button) {
-        button?.isEnabled = false
-        button?.isClickable = false
+        button.isEnabled = false
+        button.isClickable = false
     }
 
     private fun enableButtons() {
@@ -152,7 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun enableButton(button: Button) {
-        button?.isEnabled = true
-        button?.isClickable = true
+        button.isEnabled = true
+        button.isClickable = true
     }
 }
