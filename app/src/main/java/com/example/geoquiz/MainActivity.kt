@@ -1,10 +1,14 @@
 package com.example.geoquiz
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.geoquiz.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -16,7 +20,12 @@ class MainActivity : AppCompatActivity() {
 
     private val quizViewModel: QuizViewModel by viewModels()
 
-
+    private val cheatLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+            result ->
+        // Handle the result
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,8 +36,13 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
 
-        Toast.makeText(this, R.string.welcome_message, Toast.LENGTH_LONG)
-            .show()
+        updateButtons()
+
+        binding.cheatButton.setOnClickListener {
+            val answerIsTrue = quizViewModel.currentQuestionAnswer
+            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            cheatLauncher.launch(intent)
+        }
 
         binding.trueButton.setOnClickListener {
             checkAnswer(true)
@@ -42,20 +56,32 @@ class MainActivity : AppCompatActivity() {
         binding.nextButton.setOnClickListener {
             quizViewModel.moveToNext()
             updateQuestion()
+            updateButtons()
         }
 
         binding.previousButton.setOnClickListener {
             quizViewModel.moveToPrev()
             updateQuestion()
+            updateButtons()
         }
 
         binding.questionTextView.setOnClickListener {
             quizViewModel.moveToNext()
             updateQuestion()
+            updateButtons()
         }
 
         updateQuestion()
     }
+
+    private fun updateButtons() {
+        if(quizViewModel.currentQuestion.isAnswered){
+            disableButtons()
+        } else {
+            enableButtons()
+        }
+    }
+
 
     override fun onStart() {
         super.onStart()
@@ -88,13 +114,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAnswer(userAnswer : Boolean) {
-        val correctAnswer = quizViewModel.currentQuestionAnswer
+        quizViewModel.answerQuestion(userAnswer)
+        val numQuestions = quizViewModel.numQuestions
+        val correctAnswers = quizViewModel.correctAnswers
 
-        val messageResId = if (userAnswer == correctAnswer) R.string.correct_toast else R.string.incorrect_toast
+        val messageResId = when {
+            quizViewModel.everyQuestionAnswered -> getString(R.string.score_toast, correctAnswers, numQuestions)
+            else -> {
+                if(quizViewModel.currentQuestionAnswer == userAnswer) {
+                    getString(R.string.correct_toast)
+                } else getString(R.string.incorrect_toast)
+            }
+        }
+        disableButtons()
 
         val resultMessage: Snackbar = Snackbar
             .make(binding.root, messageResId, Snackbar.LENGTH_LONG)
 
         resultMessage.show()
+    }
+
+    private fun disableButtons() {
+        disableButton(binding.falseButton)
+        disableButton(binding.trueButton)
+        disableButton(binding.cheatButton)
+    }
+
+    private fun disableButton(button: Button) {
+        button?.isEnabled = false
+        button?.isClickable = false
+    }
+
+    private fun enableButtons() {
+        enableButton(binding.falseButton)
+        enableButton(binding.trueButton)
+        enableButton(binding.cheatButton)
+    }
+
+    private fun enableButton(button: Button) {
+        button?.isEnabled = true
+        button?.isClickable = true
     }
 }
