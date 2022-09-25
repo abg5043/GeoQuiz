@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.geoquiz.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
+import kotlin.math.roundToInt
 
 private const val TAG = "MainActivity"
 
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateButtons() {
-        if(quizViewModel.currentQuestion.isAnswered){
+        if(quizViewModel.currentQuestionIsAnswered){
             disableButtons()
         } else {
             enableButtons()
@@ -116,7 +117,12 @@ class MainActivity : AppCompatActivity() {
         val correctAnswers = quizViewModel.correctAnswers
 
         val messageResId = when {
-            quizViewModel.everyQuestionAnswered -> getString(R.string.score_toast, correctAnswers, numQuestions)
+            quizViewModel.everyQuestionAnswered -> getString(
+                R.string.score_toast,
+                correctAnswers,
+                numQuestions,
+                (correctAnswers / numQuestions.toFloat() * 100.0).roundToInt(),
+            )
             else -> {
                 if(quizViewModel.currentQuestionAnswer == userAnswer) {
                     getString(R.string.correct_toast)
