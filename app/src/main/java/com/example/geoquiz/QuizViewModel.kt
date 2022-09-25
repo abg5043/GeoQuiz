@@ -1,6 +1,5 @@
 package com.example.geoquiz
 
-import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -28,12 +27,12 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         set(value) = savedStateHandle.set(ANSWERED_QUESTIONS_LIST, value)
 
     private val questionBank = listOf(
-        Question(R.string.question_australia, true, false),
-        Question(R.string.question_oceans, true, false),
-        Question(R.string.question_mideast, false, false),
-        Question(R.string.question_africa, false, false),
-        Question(R.string.question_americas, true, false),
-        Question(R.string.question_asia, true, false)
+        Question(R.string.question_australia, true),
+        Question(R.string.question_oceans, true),
+        Question(R.string.question_mideast, false),
+        Question(R.string.question_africa, false),
+        Question(R.string.question_americas, true),
+        Question(R.string.question_asia, true)
     )
 
 
@@ -58,9 +57,6 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     val currentQuestionText : Int
         get() = questionBank[currentIndex].textResId
 
-    val currentQuestion : Question
-        get() = questionBank[currentIndex]
-
     val numQuestions : Int
         get() = questionBank.size
 
@@ -81,7 +77,7 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     }
 
     fun answerQuestion(userAnswer : Boolean) {
-        var tempIsAnsweredList = answeredQuestionsList
+        val tempIsAnsweredList = answeredQuestionsList
         tempIsAnsweredList[currentIndex] = true
         answeredQuestionsList = tempIsAnsweredList
         answeredQuestions++
