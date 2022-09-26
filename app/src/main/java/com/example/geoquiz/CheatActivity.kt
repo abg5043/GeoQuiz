@@ -53,7 +53,11 @@ class CheatActivity : AppCompatActivity() {
         }
 
         if (cheatViewModel.buttonWasClicked) {
-            binding.answerTextView.setText(R.string.true_button)
+            val answerText = when {
+                answerIsTrue -> R.string.true_button
+                else         -> R.string.false_button
+            }
+            binding.answerTextView.setText(answerText)
             setAnswerShownResult(true)
         }
     }

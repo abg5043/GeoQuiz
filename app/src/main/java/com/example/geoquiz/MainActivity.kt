@@ -25,7 +25,8 @@ class MainActivity : AppCompatActivity() {
             result ->
         // Handle the result
         if (result.resultCode == Activity.RESULT_OK) {
-            quizViewModel.isCheater = result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+            val cheated = result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+            if(cheated) quizViewModel.markQuestionAsCheated()
         }
     }
 
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         val correctAnswers = quizViewModel.correctAnswers
 
         val messageResId = when {
-            quizViewModel.isCheater -> getString(R.string.judgment_toast)
+            quizViewModel.currentQuestionCheated -> getString(R.string.judgment_toast)
             quizViewModel.everyQuestionAnswered -> getString(
                 R.string.score_toast,
                 correctAnswers,

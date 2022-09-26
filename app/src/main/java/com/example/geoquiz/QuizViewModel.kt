@@ -9,12 +9,23 @@ const val CURRENT_INDEX_KEY = "CURRENT_INDEX_KEY"
 const val ANSWERED_QUESTIONS_KEY = "ANSWERED_QUESTIONS_KEY"
 const val CORRECT_ANSWERS_KEY = "CORRECT_ANSWERS_KEY"
 const val ANSWERED_QUESTIONS_LIST = "ANSWERED_QUESTIONS_LIST"
-const val IS_CHEATER_KEY = "IS_CHEATER_KEY"
+const val CHEATED_QUESTIONS_LIST = "CHEATED_QUESTIONS_LIST"
 
 class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     init {
         Log.d(TAG, "ViewModel instance created")
     }
+
+    private var cheatedQuestionsList: MutableList<Boolean>
+        get() = savedStateHandle.get(CHEATED_QUESTIONS_LIST) ?: mutableListOf(
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+        )
+        set(value) = savedStateHandle.set(CHEATED_QUESTIONS_LIST, value)
 
     private var answeredQuestionsList: MutableList<Boolean>
         get() = savedStateHandle.get(ANSWERED_QUESTIONS_LIST) ?: mutableListOf(
@@ -45,10 +56,6 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         get() = savedStateHandle.get(ANSWERED_QUESTIONS_KEY) ?: 0
         set(value) = savedStateHandle.set(ANSWERED_QUESTIONS_KEY, value)
 
-    var isCheater : Boolean
-        get() = savedStateHandle.get(IS_CHEATER_KEY) ?: false
-        set(value) = savedStateHandle.set(IS_CHEATER_KEY, value)
-
     var correctAnswers: Int
         get() = savedStateHandle.get(CORRECT_ANSWERS_KEY) ?: 0
         private set(value) = savedStateHandle.set(CORRECT_ANSWERS_KEY, value)
@@ -68,6 +75,9 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     val currentQuestionIsAnswered : Boolean
         get() = answeredQuestionsList[currentIndex]
 
+    val currentQuestionCheated : Boolean
+        get() = cheatedQuestionsList[currentIndex]
+
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "ViewModel instance about to be destroyed")
@@ -79,6 +89,12 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
 
     fun moveToNext() {
         currentIndex = (currentIndex + 1) % questionBank.size
+    }
+
+    fun markQuestionAsCheated() {
+        val tempCheatedQuestionList = cheatedQuestionsList
+        tempCheatedQuestionList[currentIndex] = true
+        cheatedQuestionsList = tempCheatedQuestionList
     }
 
     fun answerQuestion(userAnswer : Boolean) {
