@@ -1,5 +1,6 @@
 package com.example.geoquiz
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -23,6 +24,9 @@ class MainActivity : AppCompatActivity() {
     ) {
             result ->
         // Handle the result
+        if (result.resultCode == Activity.RESULT_OK) {
+            quizViewModel.isCheater = result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+        }
     }
 
 
@@ -48,7 +52,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.falseButton.setOnClickListener {
             checkAnswer(false)
-
         }
 
         binding.nextButton.setOnClickListener {
@@ -117,6 +120,7 @@ class MainActivity : AppCompatActivity() {
         val correctAnswers = quizViewModel.correctAnswers
 
         val messageResId = when {
+            quizViewModel.isCheater -> getString(R.string.judgment_toast)
             quizViewModel.everyQuestionAnswered -> getString(
                 R.string.score_toast,
                 correctAnswers,
